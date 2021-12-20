@@ -14,6 +14,7 @@ pw = os.environ.get("password")
 log_response_data = os.environ.get("log_response_data", "false").lower() == "true"
 headers = ujson.loads('{"Content-Type": "application/json"}')
 stream_data = os.environ.get("stream_data", "false").lower() == "true"
+ca_cert_path = os.environ.get("ca_cert_path", "/etc/ssl/certs")
 
 
 def stream_json(clean):
@@ -36,16 +37,11 @@ class BasicUrlSystem:
     def make_session(self):
         session = requests.Session()
         session.headers = self._config["headers"]
-        session.verify = True
+        session.verify = ca_cert_path
         return session
 
 
 session_factory = BasicUrlSystem({"headers": headers})
-
-
-# def write_certificate():
-#     open(pkey_file, 'wb').write(bytes(pkey, 'ascii'))
-#     open(cert_file, 'wb').write(bytes(cert, 'ascii'))
 
 
 @app.route("/<path:path>", methods=["GET"])
@@ -54,13 +50,10 @@ def get(path):
     if request.query_string:
         request_url = "{0}?{1}".format(request_url, request.query_string.decode("utf-8"))
 
-    # request_cert = (cert_file, pkey_file)
-
     logger.info("Request url: %s", request_url)
 
     try:
         with session_factory.make_session() as s:
-            # request_data = s.request("GET", request_url, auth=(username, pw), cert=request_cert, headers=headers)
             request_data = s.request("GET", request_url, auth=(username, pw), headers=headers)
             if log_response_data:
                 logger.info("Data received: '%s'", request_data.text)
@@ -75,8 +68,6 @@ def get(path):
 
 
 if __name__ == '__main__':
-    # write_certificate()
-
     cherrypy.tree.graft(app, '/')
 
     # Set the configuration of the web server to production mode
