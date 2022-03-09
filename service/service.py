@@ -4,6 +4,7 @@ import os
 import logger
 import cherrypy
 import ujson
+from certificate_handler import CertificateHandler
 
 app = Flask(__name__)
 logger = logger.Logger('basic-auth-proxy-service')
@@ -14,7 +15,17 @@ pw = os.environ.get("password")
 log_response_data = os.environ.get("log_response_data", "false").lower() == "true"
 headers = ujson.loads('{"Content-Type": "application/json"}')
 stream_data = os.environ.get("stream_data", "false").lower() == "true"
+
+ca_cert = os.environ.get("ca_cert", None)
+ca_cert_file = os.environ.get("ca_cert_file", "/usr/local/share/ca-certificates/ca.crt")
 ca_cert_path = os.environ.get("ca_cert_path", "/etc/ssl/certs")
+
+# install CA certificate inside container
+if ca_cert:
+    ca = CertificateHandler(ca_cert, ca_cert_file)
+    logger.debug(ca)
+    ca.write()
+    os.system("update-ca-certificates")
 
 
 def stream_json(clean):
