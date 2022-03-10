@@ -16,8 +16,13 @@ A simple service that serves as a proxy for Basic Authentication.
 
 `stream_data` - stream response data, default value: false.
 
-`ca_cert_path` - where to find CA certificates inside the container, default: '/etc/ssl/certs'.
+`ca_cert` - CA certificate chain
 
+`ca_cert_file` - File name in which to store `ca_cert`, default: `/usr/local/share/ca-certificates/ca.crt`
+
+`ca_cert_path` - where to find installed CA certificates inside the container, default: '/etc/ssl/certs'.
+
+`LOG_LEVEL` - Default 'INFO'. Ref: https://docs.python.org/3/howto/logging.html#logging-levels
 
 ### Example proxy system config:
 
