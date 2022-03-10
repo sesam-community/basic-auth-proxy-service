@@ -1,13 +1,15 @@
 import requests
 from flask import Flask, Response, request
 import os
-import logger
+import logging
 import cherrypy
 import ujson
 from certificate_handler import CertificateHandler
 
 app = Flask(__name__)
-logger = logger.Logger('basic-auth-proxy-service')
+
+logger = logging.getLogger("basic-auth-proxy-service")
+logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 
 url = os.environ.get("base_url")
 username = os.environ.get("username")
