@@ -22,6 +22,8 @@ A simple service that serves as a proxy for Basic Authentication.
 
 `ca_cert_path` - where to find installed CA certificates inside the container, default: '/etc/ssl/certs'.
 
+`LOG_LEVEL` - Default 'INFO'. Ref: https://docs.python.org/3/howto/logging.html#logging-levels
+
 ### Example proxy system config:
 
 ```json
